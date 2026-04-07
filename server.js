@@ -73,6 +73,16 @@ app.get('/api/history', async (req, res) => {
 	res.json({stationName: station.name, stationId, hours, records})
 })
 
+// Health check for Docker / orchestrators
+app.get('/healthz', (req, res) => {
+	try {
+		const snapshot = getLatestSnapshot(resolvedStations[0]?.id)
+		res.json({status: 'ok', stations: resolvedStations.length})
+	} catch (err) {
+		res.status(503).json({status: 'error', message: err.message})
+	}
+})
+
 // Start
 async function main() {
 	try {
