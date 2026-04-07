@@ -3,6 +3,9 @@ const HISTORY_INTERVAL = 300_000
 
 const $ = (id) => document.getElementById(id)
 
+let stations = []
+let selectedStationId = null
+
 function formatTime(iso) {
 	if (!iso) return '--'
 	return new Date(iso).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})
@@ -46,11 +49,29 @@ function statusText(summary) {
 	return 'On time'
 }
 
-function renderStatus(data) {
-	if (data.stationName) {
-		$('stationName').textContent = data.stationName
+function renderStationTabs() {
+	const container = $('stationTabs')
+	container.innerHTML = ''
+	for (const s of stations) {
+		const btn = document.createElement('button')
+		btn.className = 'station-tab' + (s.id === selectedStationId ? ' active' : '')
+		btn.textContent = s.name
+		btn.addEventListener('click', () => selectStation(s.id))
+		container.appendChild(btn)
 	}
+}
 
+function selectStation(stationId) {
+	selectedStationId = stationId
+	renderStationTabs()
+	// Save selection to URL hash
+	location.hash = stationId
+	// Fetch immediately for the new station
+	fetchStatus()
+	fetchHistory()
+}
+
+function renderStatus(data) {
 	const dot = $('statusDot')
 	dot.className = 'status-dot ' + statusColor(data.summary)
 
@@ -164,8 +185,9 @@ function esc(str) {
 }
 
 async function fetchStatus() {
+	if (!selectedStationId) return
 	try {
-		const res = await fetch('/api/status')
+		const res = await fetch(`/api/status?station=${encodeURIComponent(selectedStationId)}`)
 		if (!res.ok) throw new Error('Not OK')
 		const data = await res.json()
 		renderStatus(data)
@@ -176,8 +198,9 @@ async function fetchStatus() {
 }
 
 async function fetchHistory() {
+	if (!selectedStationId) return
 	try {
-		const res = await fetch('/api/history?hours=24')
+		const res = await fetch(`/api/history?station=${encodeURIComponent(selectedStationId)}&hours=24`)
 		if (!res.ok) throw new Error('Not OK')
 		const data = await res.json()
 		renderHistory(data)
@@ -186,10 +209,31 @@ async function fetchHistory() {
 	}
 }
 
-// Initial load
-fetchStatus()
-fetchHistory()
+async function init() {
+	try {
+		const res = await fetch('/api/stations')
+		stations = await res.json()
+	} catch {
+		$('connectionBanner').style.display = 'block'
+		return
+	}
 
-// Polling
-setInterval(fetchStatus, STATUS_INTERVAL)
-setInterval(fetchHistory, HISTORY_INTERVAL)
+	if (stations.length === 0) return
+
+	// Restore selection from URL hash, or default to first station
+	const hashId = location.hash.slice(1)
+	if (hashId && stations.some(s => s.id === hashId)) {
+		selectedStationId = hashId
+	} else {
+		selectedStationId = stations[0].id
+	}
+
+	renderStationTabs()
+	fetchStatus()
+	fetchHistory()
+
+	setInterval(fetchStatus, STATUS_INTERVAL)
+	setInterval(fetchHistory, HISTORY_INTERVAL)
+}
+
+init()

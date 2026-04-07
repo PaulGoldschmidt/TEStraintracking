@@ -237,6 +237,41 @@ footer a {
 	text-decoration: none;
 }
 
+/* Station Selector */
+.station-selector {
+	margin-bottom: 1.5rem;
+}
+
+.station-tabs {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.station-tab {
+	padding: 0.5rem 1rem;
+	border-radius: 8px;
+	border: 1px solid var(--border);
+	background: var(--surface);
+	color: var(--text-dim);
+	font-size: 0.85rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.station-tab:hover {
+	border-color: var(--accent);
+	color: var(--text);
+}
+
+.station-tab.active {
+	background: var(--accent);
+	border-color: var(--accent);
+	color: white;
+}
+
 /* Connection banner */
 .connection-lost {
 	background: var(--red);
