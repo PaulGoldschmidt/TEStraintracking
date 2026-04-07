@@ -1,6 +1,7 @@
 import express from 'express'
 import {findStationId} from './lib/hafas.js'
 import {startPolling, getLatestSnapshot, getHistory} from './lib/poller.js'
+import {closeDb} from './lib/db.js'
 
 const PORT = process.env.PORT || 3000
 
@@ -67,7 +68,7 @@ app.get('/api/history', async (req, res) => {
 		return res.status(400).json({error: 'Unknown station. Use /api/stations to list available stations.'})
 	}
 
-	const hours = Math.min(Math.max(parseInt(req.query.hours) || 24, 1), 168)
+	const hours = Math.min(Math.max(parseInt(req.query.hours) || 24, 1), 8760)
 	const records = await getHistory(stationId, hours)
 	res.json({stationName: station.name, stationId, hours, records})
 })
@@ -100,3 +101,6 @@ async function main() {
 }
 
 main()
+
+process.on('SIGTERM', () => { closeDb(); process.exit(0) })
+process.on('SIGINT', () => { closeDb(); process.exit(0) })
