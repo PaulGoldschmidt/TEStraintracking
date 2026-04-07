@@ -1,0 +1,18 @@
+{
+  "name": "tes-gigatrain-tracker",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Track delays on the TES Gigatrain",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0",
+    "hafas-client": "^6.0.0"
+  }
+}

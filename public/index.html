@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TES Gigatrain Tracker</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="connection-lost" id="connectionBanner">Connection lost - retrying...</div>
+
+	<div class="container">
+		<header>
+			<h1>TES Gigatrain Tracker</h1>
+			<p>Live delay monitoring &middot; <span id="stationName">Loading...</span></p>
+		</header>
+
+		<div class="status-card">
+			<div class="status-indicator">
+				<span class="status-dot grey" id="statusDot"></span>
+				<span id="statusText">Loading...</span>
+			</div>
+			<div class="status-details">
+				<span id="statusSummary"></span>
+				<span>&middot;</span>
+				<span>Updated <span id="lastUpdated">--</span></span>
+			</div>
+		</div>
+
+		<div class="section">
+			<h2>Upcoming Departures</h2>
+			<div id="departuresContent">
+				<div class="empty-state">Loading departure data...</div>
+			</div>
+		</div>
+
+		<div class="section">
+			<h2>Delay History (Last 24h)</h2>
+			<div class="stats-row" id="statsRow">
+				<div class="stat">
+					<div class="stat-value" id="statOnTime">--</div>
+					<div class="stat-label">On Time</div>
+				</div>
+				<div class="stat">
+					<div class="stat-value" id="statAvgDelay">--</div>
+					<div class="stat-label">Avg Delay</div>
+				</div>
+				<div class="stat">
+					<div class="stat-value" id="statMaxDelay">--</div>
+					<div class="stat-label">Max Delay</div>
+				</div>
+				<div class="stat">
+					<div class="stat-value" id="statPolls">--</div>
+					<div class="stat-label">Data Points</div>
+				</div>
+			</div>
+			<div class="chart-container" id="chart"></div>
+			<div class="chart-labels">
+				<span id="chartStart">--</span>
+				<span id="chartEnd">Now</span>
+			</div>
+		</div>
+
+		<footer>
+			Data from BVG via <a href="https://github.com/public-transport/hafas-client">hafas-client</a> &middot; Auto-refreshes every 30s
+		</footer>
+	</div>
+
+	<script src="app.js"></script>
+</body>
+</html>
